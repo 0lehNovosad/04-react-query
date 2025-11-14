@@ -1,44 +1,41 @@
-import css from './MovieModal.module.css';
-import { type Movie } from '../../types/movie';
-import { useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import { createPortal } from "react-dom";
+import css from "./MovieModal.module.css";
+import type React from "react";
+import { useEffect } from "react";
+import type { Movie } from "../../types/movie";
 
 interface MovieModalProps {
-  movie: Movie | null;
   onClose: () => void;
+  movie: Movie;
 }
 
-export default function MovieModal({ movie, onClose }: MovieModalProps) {
-  const handleModalBackdropClick = (
-    event: React.MouseEvent<HTMLDivElement>
-  ) => {
+export default function MovieModal({ onClose, movie }: MovieModalProps) {
+  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       onClose();
     }
   };
 
   useEffect(() => {
-    const handleKeyDown = (ev: KeyboardEvent) => {
-      if (ev.key === 'Escape') {
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
         onClose();
       }
     };
-
-    document.addEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = 'hidden';
-
+    document.addEventListener("keydown", handleKeydown);
+    document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      document.removeEventListener("keydown", handleKeydown);
+      document.body.style.overflow = "";
     };
   }, [onClose]);
 
   return createPortal(
     <div
+      onClick={handleBackdropClick}
       className={css.backdrop}
       role="dialog"
       aria-modal="true"
-      onClick={handleModalBackdropClick}
     >
       <div className={css.modal}>
         <button
@@ -49,18 +46,18 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
           &times;
         </button>
         <img
-          src={'https://image.tmdb.org/t/p/original' + movie?.backdrop_path}
-          alt={movie?.title}
+          src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
+          alt={movie.title}
           className={css.image}
         />
         <div className={css.content}>
-          <h2>{movie?.title}</h2>
-          <p>{movie?.overview}</p>
+          <h2>{movie.title}</h2>
+          <p>{movie.overview}</p>
           <p>
-            <strong>Release Date:</strong> {movie?.release_date}
+            <strong>Release Date:</strong> {movie.release_date}
           </p>
           <p>
-            <strong>Rating:</strong> {movie?.vote_average}/10
+            <strong>Rating:</strong> {`${movie.vote_average}/10`}
           </p>
         </div>
       </div>
